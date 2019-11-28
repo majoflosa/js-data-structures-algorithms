@@ -8,6 +8,35 @@ class LinkedList {
         return { next: null, value: value };
     }
 
+    forEach(callback) {
+        let current = this.head;
+        let failSafe = 0;
+        while (current !== null) {
+            callback(current);
+            current = current.next;
+
+            failSafe++;
+            if (failSafe > 100) {
+                console.log('Loop is too big; exiting loop');
+                break;
+            }
+        }
+    }
+
+    findNode(value) {
+        let theNode = null;
+        let current = this.head;
+        while (current !== null) {
+            if (current.value === value) {
+                theNode = current;
+                break;
+            }
+            current = current.next;
+        }
+
+        return theNode;
+    }
+
     insertAtBeginning(value) {
         const newHead = this.createNode(value);
         const oldHead = this.head;
@@ -25,19 +54,64 @@ class LinkedList {
         return this.tail;
     }
 
-    forEach(callback) {
-        let current = this.head;
-        let failSafe = 0;
-        while(current !== null) {
-            callback(current);
-            current = current.next;
+    insertAfter(refNode, value) {
+        const newNode = this.createNode(value);
+        newNode.next = refNode.next;
+        refNode.next = newNode;
 
-            failSafe++;
-            if (failSafe > 100) {
-                console.log('Loop is too big; exiting loop');
-                break;
-            }
+        if (this.tail === refNode) this.tail = newNode;
+        
+        return newNode;
+    }
+
+    removeHead() {
+        const removed = this.head;
+        delete this.head;
+        if (removed.next) {
+            this.head = removed.next;
         }
+
+        return removed;
+    }
+
+    removeTail() {
+        const removed = this.tail;
+        delete this.tail;
+
+        let current = this.head;
+        while (current !== null) {
+            if (current.next === removed) {
+                current.next = null;
+                this.tail = current;
+                break;
+            } 
+            current = current.next;
+        }
+
+        return removed;
+    }
+
+    removeAfter(refNode) {
+        if (refNode === this.tail) return false;
+
+        const removed = refNode.next;
+        let newNext = null;
+        if (removed !== this.tail) {
+            newNext = removed.next;
+        } else {
+            this.tail = refNode;
+        }
+        delete refNode.next;
+        refNode.next = newNext;
+
+        return removed;
+    }
+
+    print() {
+        const result = [];
+        this.forEach(node => result.push(node.value));
+        
+        return result;
     }
 }
 

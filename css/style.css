@@ -51,3 +51,7 @@ body {
 .output p {
     font-family: monospace;
 }
+
+.linked-list {
+    display: flex;
+}
