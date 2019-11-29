@@ -84,8 +84,12 @@ class LinkedList {
                 current.next = null;
                 this.tail = current;
                 break;
-            } 
-            current = current.next;
+            } else if (current === removed) {
+                // head is tail, removing the last node
+                current = null;
+                delete this.head;
+            }
+            current = current ? current.next : null;
         }
 
         return removed;
