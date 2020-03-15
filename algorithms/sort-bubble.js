@@ -1,0 +1,37 @@
+function bubbleSort( list ) {
+    for ( let i = 0; i < list.length; i++ ) {
+        for ( let j = 0; j < list.length; j++ ) {
+            if ( list[j + 1] !== undefined ) {
+                if ( list[j] > list[j + 1] ) {
+                    const big = list[j];
+                    list[j] = list[j + 1];
+                    list[j + 1] = big;
+                }
+            }
+        }
+    }
+    
+    return list;
+}
+
+// alternative
+function bubble_Sort(a) {
+    var swap;
+    var n = a.length - 1;
+    var x = a;
+
+    do {
+        swap = false;
+        for (var i = 0; i < n; i++) {
+            if (x[i] < x[i + 1]) {
+               var temp = x[i];
+               x[i] = x[i + 1];
+               x[i + 1] = temp;
+               swap = true;
+            }
+        }
+        n--;
+    } while (swap);
+    
+    return x; 
+}
