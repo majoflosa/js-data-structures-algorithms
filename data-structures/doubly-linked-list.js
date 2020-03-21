@@ -1,4 +1,4 @@
-class LinkedList {
+class DoublyLinkedList {
     // challenge: allow for constructor to take in array, and make each element in array a node on instantiation
     constructor(headValue) {
         this.head = this.createNode(headValue);
@@ -6,9 +6,9 @@ class LinkedList {
     }
 
     createNode(value) {
-        return { next: null, value: value };
+        return { next: null, prev: null, value: value };
     }
-
+    
     forEach(callback) {
         let current = this.head;
         while (current !== null) {
@@ -19,6 +19,7 @@ class LinkedList {
 
     findNode(value) {
         let theNode = null;
+
         let current = this.head;
         while (current !== null) {
             if (current.value === value) {
@@ -31,32 +32,55 @@ class LinkedList {
         return theNode;
     }
 
-    // findNextNode(redNode) {}
+    findNextNode(refNode) {
+        return refNode.next;
+    }
+
+    findPreviousNode(refNode) {
+        return refNode.prev;
+    }
 
     insertAtBeginning(value) {
         const newHead = this.createNode(value);
         const oldHead = this.head;
         newHead.next = oldHead;
+        oldHead.prev = newHead;
         this.head = newHead;
 
-        return this.head;
+        return this;
     }
 
     insertAtEnd(value) {
         const newTail = this.createNode(value);
-        this.tail.next = newTail;
+        const oldTail = this.tail;
+        newTail.prev = oldTail;
+        oldTail.next = newTail;
         this.tail = newTail;
 
-        return this.tail;
+        return this;
+    }
+
+    insertBefore(refNode, value) {
+        const newNode = this.createNode(value);
+        newNode.next = refNode;
+        newNode.prev = refNode.prev;
+        refNode.prev.next = newNode;
+        refNode.prev = newNode;
+
+        if (refNode === this.head) this.head = newNode;
+
+        return newNode;
     }
 
     insertAfter(refNode, value) {
         const newNode = this.createNode(value);
         newNode.next = refNode.next;
+        newNode.prev = refNode;
+        refNode.next.prev = newNode;
         refNode.next = newNode;
 
-        if (this.tail === refNode) this.tail = newNode;
-        
+        if (refNode === this.tail) this.tail = newNode;
+
         return newNode;
     }
 
@@ -74,61 +98,17 @@ class LinkedList {
         const removed = this.tail;
         delete this.tail;
 
-        let current = this.head;
-        while (current !== null) {
-            if (current.next === removed) {
-                current.next = null;
-                this.tail = current;
-                break;
-            } else if (current === removed) {
-                // head is tail, removing the last node
-                current = null;
-                delete this.head;
-            }
-            current = current ? current.next : null;
+        if (removed.prev) {
+            this.tail = removed.prev;
+            this.tail.next = null;
         }
 
         return removed;
     }
 
-    removeAfter(refNode) {
-        if (refNode === this.tail) return false;
+    removeBefore() {}
 
-        const removed = refNode.next;
-        let newNext = null;
-        if (removed !== this.tail) {
-            newNext = removed.next;
-        } else {
-            this.tail = refNode;
-        }
-        delete refNode.next;
-        refNode.next = newNext;
+    removeAfter() {}
 
-        return removed;
-    }
-
-    print() {
-        const result = [];
-        this.forEach(node => result.push(node.value));
-        
-        return result;
-    }
+    print() {}
 }
-
-const myLinkedList = new LinkedList('first'); 
-
-/*  
-{ 
-    head: {
-        value: 'first', 
-        next: null
-    },
-    tail: { 
-        value: 'first', 
-        next: null
-    }
-}
-*/
-
-
-// = = = = = = = = = = =

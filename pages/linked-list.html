@@ -20,6 +20,18 @@
             <div class="controls">
                 <p><input type="text" id="head-field"> <button id="insert-head">Insert at Beginning</button></p>
                 <p><input type="text" id="tail-field"> <button id="insert-tail">Insert at End</button></p>
+                <p>
+                    <select name="after-dropdown" id="after-dropdown">
+                        <option value="">- Select -</option>
+                        <option value="Bob">Bob</option>
+                        <option value="Joan">Joan</option>
+                        <option value="Jane">Jane</option>
+                    </select>
+                    <input type="text" id="after-field">
+                    <button id="insert-after">Insert After</button>
+                </p>
+                <p><button id="remove-head">Remove Head</button></p>
+                <p><button id="remove-tail">Remove Tail</button></p>
             </div>
         
             <div class="output">
@@ -30,6 +42,7 @@
     </div>
 
     
+    <script src="/data-structures/linked-list.js"></script>
     <script src="/js-practice/linked-list-practice.js"></script>
 </body>
 </html>

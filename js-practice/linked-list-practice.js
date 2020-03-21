@@ -1,124 +1,3 @@
-class LinkedList {
-    constructor(headValue) {
-        this.head = this.createNode(headValue);
-        this.tail = this.head;
-    }
-
-    createNode(value) {
-        return { next: null, value: value };
-    }
-
-    forEach(callback) {
-        let current = this.head;
-        let failSafe = 0;
-        while (current !== null) {
-            callback(current);
-            current = current.next;
-
-            failSafe++;
-            if (failSafe > 100) {
-                console.log('Loop is too big; exiting loop');
-                break;
-            }
-        }
-    }
-
-    findNode(value) {
-        let theNode = null;
-        let current = this.head;
-        while (current !== null) {
-            if (current.value === value) {
-                theNode = current;
-                break;
-            }
-            current = current.next;
-        }
-
-        return theNode;
-    }
-
-    insertAtBeginning(value) {
-        const newHead = this.createNode(value);
-        const oldHead = this.head;
-        newHead.next = oldHead;
-        this.head = newHead;
-
-        return this.head;
-    }
-
-    insertAtEnd(value) {
-        const newTail = this.createNode(value);
-        this.tail.next = newTail;
-        this.tail = newTail;
-
-        return this.tail;
-    }
-
-    insertAfter(refNode, value) {
-        const newNode = this.createNode(value);
-        newNode.next = refNode.next;
-        refNode.next = newNode;
-
-        if (this.tail === refNode) this.tail = newNode;
-        
-        return newNode;
-    }
-
-    removeHead() {
-        const removed = this.head;
-        delete this.head;
-        if (removed.next) {
-            this.head = removed.next;
-        }
-
-        return removed;
-    }
-
-    removeTail() {
-        const removed = this.tail;
-        delete this.tail;
-
-        let current = this.head;
-        while (current !== null) {
-            if (current.next === removed) {
-                current.next = null;
-                this.tail = current;
-                break;
-            } else if (current === removed) {
-                // head is tail, removing the last node
-                current = null;
-                delete this.head;
-            }
-            current = current ? current.next : null;
-        }
-
-        return removed;
-    }
-
-    removeAfter(refNode) {
-        if (refNode === this.tail) return false;
-
-        const removed = refNode.next;
-        let newNext = null;
-        if (removed !== this.tail) {
-            newNext = removed.next;
-        } else {
-            this.tail = refNode;
-        }
-        delete refNode.next;
-        refNode.next = newNext;
-
-        return removed;
-    }
-
-    print() {
-        const result = [];
-        this.forEach(node => result.push(node.value));
-        
-        return result;
-    }
-}
-
 const linkedList = new LinkedList('Joan');
 linkedList.insertAtBeginning('Bob');
 linkedList.insertAtEnd('Jane');
@@ -131,10 +10,20 @@ const linkedListApp = {
         this.$headField = document.querySelector('#head-field');
         this.$insertTail = document.querySelector('#insert-tail');
         this.$tailField = document.querySelector('#tail-field');
+        this.$afterDropdown = document.querySelector('#after-dropdown');
+        this.$afterField = document.querySelector('#after-field');
+        this.$insertAfter = document.querySelector('#insert-after');
+        this.$removeHead = document.querySelector('#remove-head');
+        this.$removeTail = document.querySelector('#remove-tail');
         this.$outputEl = document.querySelector('.output p');
     },
     syncDom: function() {
         this.$list.innerHTML = '';
+        this.$afterDropdown.innerHTML = '';
+        
+        const $blankOption = document.createElement('option');
+        $blankOption.innerText = '- Select -';
+        this.$afterDropdown.appendChild($blankOption);
 
         linkedList.forEach((current) => {
             const $el = document.createElement('div');
@@ -145,6 +34,12 @@ const linkedListApp = {
                 <small>${current.next ? ' Next: ' + current.next.value : ''}</small>
             `;
             this.$list.appendChild($el);
+
+            const $option = document.createElement('option');
+            $option.setAttribute('value', current.value);
+            $option.innerText = current.value;
+            
+            this.$afterDropdown.appendChild($option);
         });
 
         this.$outputEl.innerText = JSON.stringify(linkedList);
@@ -152,6 +47,10 @@ const linkedListApp = {
     bindEvents: function() {
         this.$insertHead.addEventListener('click', e => this.insertAtBeginning(this.$headField.value));
         this.$insertTail.addEventListener('click', e => this.insertAtEnd(this.$tailField.value));
+        this.$insertAfter
+            .addEventListener('click', e => this.insertAfter(this.$afterDropdown.value, this.$afterField.value));
+        this.$removeHead.addEventListener('click', e => this.removeHead());
+        this.$removeTail.addEventListener('click', e => this.removeTail());
     },
     init: function() {
         this.dom();
@@ -174,6 +73,23 @@ const linkedListApp = {
 
         this.$tailField.value = '';
     },
+    insertAfter: function(nodeValue, value) {
+        if (!nodeValue || !value) return;
+
+        const refNode = linkedList.findNode(nodeValue);
+        linkedList.insertAfter(refNode, value);
+        this.syncDom();
+
+        this.$afterField.value = '';
+    },
+    removeHead: function() {
+        linkedList.removeHead();
+        this.syncDom();
+    },
+    removeTail: function() {
+        linkedList.removeTail();
+        this.syncDom();
+    }
 };
 
 linkedListApp.init();

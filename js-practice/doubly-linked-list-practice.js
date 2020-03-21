@@ -1,76 +1,3 @@
-class DoublyLinkedList {
-    // challenge: allow for constructor to take in array, and make each element in array a node on instantiation
-    constructor(headValue) {
-        this.head = this.createNode(headValue);
-        this.tail = this.head;
-    }
-
-    createNode(value) {
-        return { next: null, prev: null, value: value };
-    }
-    
-    forEach(callback) {
-        let current = this.head;
-        while (current !== null) {
-            callback(current);
-            current = current.next;
-        }
-    }
-
-    findNode(value) {
-        let theNode = null;
-
-        let current = this.head;
-        while (current !== null) {
-            if (current.value === value) {
-                theNode = current;
-                break;
-            }
-            current = current.next;
-        }
-
-        return theNode;
-    }
-
-    // findNextNode(refNode) {}
-
-    // findPreviousNode(refNode) {}
-
-    insertAtBeginning(value) {
-        const newHead = this.createNode(value);
-        const oldHead = this.head;
-        newHead.next = oldHead;
-        oldHead.prev = newHead;
-        this.head = newHead;
-
-        return this;
-    }
-
-    insertAtEnd(value) {
-        const newTail = this.createNode(value);
-        const oldTail = this.tail;
-        newTail.prev = oldTail;
-        oldTail.next = newTail;
-        this.tail = newTail;
-
-        return this;
-    }
-
-    insertBefore(refNode, value) {}
-
-    insertAfter(refNode, value) {}
-
-    removeHead() {}
-
-    removeTail() {}
-
-    removeBefore() {}
-
-    removeAfter() {}
-
-    print() {}
-}
-
 const dll = new DoublyLinkedList('Bob');
 
 
@@ -82,6 +9,7 @@ const dllApp = {
         this.$headField = document.querySelector('#head-field');
         this.$insertTail = document.querySelector('#insert-tail');
         this.$tailField = document.querySelector('#tail-field');
+        this.$removeTail = document.querySelector('#remove-tail');
         this.$outputEl = document.querySelector('.output p');
     },
 
@@ -107,6 +35,7 @@ const dllApp = {
     bindEvents: function() {
         this.$insertHead.addEventListener('click', (e) => this.insertAtBeginning(this.$headField.value));
         this.$insertTail.addEventListener('click', (e) => this.insertAtEnd(this.$tailField.value));
+        this.$removeTail.addEventListener('click', (e) => this.removeTail());
     },
 
     init: function() {
@@ -115,7 +44,7 @@ const dllApp = {
         this.bindEvents();
     },
 
-    insertAtBeginning(value) {
+    insertAtBeginning: function(value) {
         if (!value) return;
 
         dll.insertAtBeginning(value);
@@ -124,13 +53,18 @@ const dllApp = {
         this.$headField.value = '';
     },
 
-    insertAtEnd(value) {
+    insertAtEnd: function(value) {
         if (!value) return;
 
         dll.insertAtEnd(value);
         this.syncDom();
 
         this.$tailField.value = '';
+    },
+
+    removeTail: function() {
+        dll.removeTail();
+        this.syncDom();
     }
 };
 dllApp.init();
