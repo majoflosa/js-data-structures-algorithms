@@ -63,20 +63,27 @@ class DoublyLinkedList {
     insertBefore(refNode, value) {
         const newNode = this.createNode(value);
         newNode.next = refNode;
-        newNode.prev = refNode.prev;
-        refNode.prev.next = newNode;
+        
+        if (refNode.prev) {
+            newNode.prev = refNode.prev;
+            refNode.prev.next = newNode;
+        }
         refNode.prev = newNode;
 
         if (refNode === this.head) this.head = newNode;
-
+        console.log(this);
         return newNode;
     }
 
     insertAfter(refNode, value) {
         const newNode = this.createNode(value);
-        newNode.next = refNode.next;
         newNode.prev = refNode;
-        refNode.next.prev = newNode;
+
+        if (refNode.next) {
+            newNode.next = refNode.next;
+            refNode.next.prev = newNode;
+        }
+
         refNode.next = newNode;
 
         if (refNode === this.tail) this.tail = newNode;
@@ -89,6 +96,7 @@ class DoublyLinkedList {
         delete this.head;
         if (removed.next) {
             this.head = removed.next;
+            this.head.prev = null;
         }
 
         return removed;
@@ -106,9 +114,48 @@ class DoublyLinkedList {
         return removed;
     }
 
-    removeBefore() {}
+    removeBefore(refNode) {
+        if (!refNode.prev) return false;
 
-    removeAfter() {}
+        const removed = refNode.prev;
+        delete refNode.prev;
 
-    print() {}
+        if (removed === this.head) {
+            this.head = refNode;
+            this.head.prev = null;
+
+            return removed;
+        }
+
+        refNode.prev = removed.prev;
+        removed.prev.next = refNode;
+
+        return removed;
+    }
+
+    removeAfter(refNode) {
+        if (!refNode.next) return false;
+
+        const removed = refNode.next;
+        delete refNode.next;
+
+        if (removed === this.tail) {
+            this.tail = refNode;
+            this.tail.next = null;
+
+            return removed;
+        }
+
+        refNode.next = removed.next;
+        removed.next.prev = refNode;
+
+        return removed;
+    }
+
+    print() {
+        const result = [];
+        this.forEach(node => result.push(node.value));
+
+        return result;
+    }
 }
